@@ -6,7 +6,7 @@ class Node {
     }
 }
 
-class Tree {
+export class Tree {
     constructor(array) {
         this.root = this.buildTree(array);
     }
@@ -237,12 +237,37 @@ class Tree {
         return depthRecursive(node, this.root);
     }
 
-    isBalanced() {}
+    isBalanced() {
+        const balancedRecursive = (node) => {
+            if (node === null) {
+                return { isBalanced: true, height: 0 };
+            }
 
-    rebalance() {}
+            const left = balancedRecursive(node.left);
+            if (!left.isBalanced) {
+                return { isBalanced: false, height: 0 };
+            }
+
+            const right = balancedRecursive(node.right);
+            if (!right.isBalanced) {
+                return { isBalanced: false, height: 0 };
+            }
+
+            const heightDifference = Math.abs(left.height - right.height);
+            const isBalanced = heightDifference <= 1;
+            const height = Math.max(left.height, right.height) + 1;
+
+            return { isBalanced, height };
+        };
+        return balancedRecursive(this.root).isBalanced;
+    }
+
+    rebalance() {
+        let inOrderTree = [];
+        const callbackPush = (node) => {
+            inOrderTree.push(node.data);
+        };
+        this.inOrder(callbackPush);
+        this.root = this.buildTree(inOrderTree);
+    }
 }
-
-const array = [1, 7, 4, 23, 8, 9, 4];
-const tree = new Tree(array);
-tree.prettyPrint(tree.root);
-console.log(tree.depth({ data: 7 }));
